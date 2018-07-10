@@ -1,1 +1,1 @@
-# pro-nodejs-iot
+# Setting up a NodeJS server for serving devices
