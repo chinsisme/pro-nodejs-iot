@@ -7,8 +7,8 @@ const port = process.env.port || 3000 ;
 const mCred = require('./routes/credentials/mongo');
 
 app.use(express.json());
-app.use('/api/login', user_login); //Login
-app.use('/api/register', user_register); //Register
+app.use('/api/user/login', user_login); //Login
+app.use('/api/user/register', user_register); //Register
 
 // const mongo_uri_long = 'mongodb://' + mCred.username + ':' + mCred.password + '@' + mCred.host + ':' + mCred.port + '/' + mCred.database;
 const mongo_uri_short = 'mongodb://' + mCred.host + '/' + mCred.database;

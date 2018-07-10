@@ -1,8 +1,12 @@
+const _ = require('lodash');
 const express = require('express');
 const router = express.Router();
 const User = require('./../../models/users');
 const validateUser = require('./validate');
 const checkIfExists = require('./checkIfExists');
+const hashFunction = require('./hash');
+
+const saltGenRounds = 10;
 
 router.use(express.json());
 
@@ -11,7 +15,7 @@ router.post('/',(req,res) => {
     if(ans) status = 200
     else status = 400;
 
-    console.log('Registration information: \n' , req.body);
+    console.log('Registration information: \n' , _.pick(req.body, ['username', 'email']));
 
     checkIfExists(req.body)
         .then((ans) =>  {
@@ -21,19 +25,26 @@ router.post('/',(req,res) => {
                 let response = 'Congratulations, this username and email is not registered!' + '\nRegistering user details...';
                 console.log(response);
 
-                const user = new User({
-                    username: req.body.username,
-                    password: req.body.password,
-                    email: req.body.email
-                });
+                const user = new User(_.pick(req.body, ['username', 'email', 'password']));
 
-                user.save()
-                    .then((ans) => {
-                        console.log(ans);
+                hashFunction(user.password,saltGenRounds)
+                    .then((password) => {
+                        user.password = password;
+                        user.save()
+                            .then((ans) => {
+                                console.log(_.pick(ans, ['username', 'email']));
+                            })
+                            .catch((err) => {
+                                console.log('Error inserting document: ' + err);
+                            });
                     })
                     .catch((err) => {
-                        console.log('Error inserting document: ' + err);
+                        console.log(err);
                     })
+
+                
+
+                
 
                 res.status(stat).send(response);
             }
