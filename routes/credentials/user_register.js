@@ -11,46 +11,59 @@ const saltGenRounds = 10;
 router.use(express.json());
 
 router.post('/',(req,res) => {
-    const ans = validateUser(req.body);
-    if(ans) status = 200
-    else status = 400;
+    validateUser(req.body)
+        .then(() => {
+            console.log('Request information fits the requirement...');
+        })
+        .catch((err) => {
+            res.status(400).send(err.name + ': ' + err.details[0].message);
+        });
 
-    console.log('Registration information: \n' , _.pick(req.body, ['username', 'email']));
+    console.log('Registration information: \n' , _.pick(req.body, ['username', 'email', 'device_id', 'device_type']));
 
     checkIfExists(req.body)
         .then((ans) =>  {
             const result = ans;
             if(!result) {
                 let stat = 200;
-                let response = 'Congratulations, this username and email is not registered!' + '\nRegistering user details...';
-                console.log(response);
 
-                const user = new User(_.pick(req.body, ['username', 'email', 'password']));
+                const user = new User(_.pick(req.body, ['username', 'email', 'password', 'device_id', 'device_type', 'device_password', 'created']));
 
                 hashFunction(user.password,saltGenRounds)
                     .then((password) => {
                         user.password = password;
-                        user.save()
-                            .then((ans) => {
-                                console.log(_.pick(ans, ['username', 'email']));
+                        console.log('This username and email has not been registered yet!');
+                        console.log('Checking for device information...');
+                        hashFunction(user.device_password,saltGenRounds)
+                            .then((device_password) => {
+                                user.device_password = device_password;
+                                user.save()
+                                    .then((ans) => {
+                                        console.log(_.pick(ans, ['username', 'email', 'device_id', 'device_type', 'created']));
+                                        let response = 'Congratulations, this username and email is not registered!' + '\nRegistering user details...' + '\nRegistering device...';                
+                                        res.status(stat).send(response);
+                                    })
+                                    .catch((err) => {
+                                        console.log('Error inserting document: ' + err);
+                                        let response = 'Could not save document!';
+                                        res.status(stat).send(response);
+                                    });
                             })
-                            .catch((err) => {
-                                console.log('Error inserting document: ' + err);
-                            });
+                            .catch((err) => console.log(err));
+                            let response = 'Incomplete/incorrect device information!';
+                            // res.status(stat).send(response);
                     })
                     .catch((err) => {
                         console.log(err);
-                    })
+                        let response = 'Sorry. Could not register!';
+                        console.log(response);
+                        // res.status(stat).send(response);
+                    });
 
-                
-
-                
-
-                res.status(stat).send(response);
             }
             else {
                 let stat = 400;
-                let response = 'This username or email already exists :( \nTry again!';
+                let response = 'This combination of username, email and device already exists :( \nTry again!';
                 console.log(response);
                 res.status(stat).send(response);
             }
