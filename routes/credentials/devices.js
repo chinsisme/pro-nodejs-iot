@@ -1,1 +1,1 @@
-module.exports = ['rpi-3b', 'arduino-uno', 'pc', 'desktop'];
+module.exports = ['rpi-3b', 'arduino-uno', 'pc', 'laptop'];
