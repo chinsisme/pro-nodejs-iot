@@ -23,24 +23,29 @@ const userSchema = new mongoose.Schema({
         maxlength: min_max.email_max,
         email: true
     },
-    device_id: {
-        type: String,
-        required: true,
-        minlength: min_max.device_id_min,
-        maxlength: min_max.device_id_max
-    },
-    device_type: {
-        type: String,
-        required: true,
-        enum: devices
-    },
-    device_password: {
-        type: String,
-        required: true,
-        minlength: min_max.device_password_min,
-        maxlength: min_max.device_password_max,
-        password: true
-    },
+    device: [{
+        device_id: {
+            type: String,
+            required: true,
+            minlength: min_max.device_id_min,
+            maxlength: min_max.device_id_max,
+            index: {
+                unique: true
+            }
+        },
+        device_type: {
+            type: String,
+            required: true,
+            enum: devices
+        },
+        device_password: {
+            type: String,
+            required: true,
+            minlength: min_max.device_password_min,
+            maxlength: min_max.device_password_max,
+            password: true
+        }
+    }],
     created: {
         type: Date,
         default: Date.now
