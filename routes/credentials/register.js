@@ -1,13 +1,19 @@
 const _ = require('lodash');
+const config = require('config');
 const express = require('express');
 const router = express.Router();
 const User = require('./../../models/users');
-const validateUser = require('./validate');
+const validateUser = require('./validateUser');
 const checkIfExists = require('./checkIfExists');
 const checkIfUserExists = require('./checkIfUserExists');
 const hashFunction = require('./hash');
 
 const saltGenRounds = 10;
+
+if (!config.get('jwtPrivateKey')) {
+    console.error('FATAL Error: key \'my_iot_jwtPrivateKey\' not set!');
+    process.exit(1);
+}
 
 router.use(express.json());
 
@@ -25,7 +31,7 @@ router.post('/',(req,res) => {
     checkIfExists(req.body)
         .then((ans) => {
             //If the exact user-device document exists, say that this user-device already exists.
-            // console.log(JSON.stringify(ans));
+            // console.log(ans);
             if(ans) {
                 console.log('This user-device already exists!');
                 res.status(400).send('This user-device already exists!');
@@ -45,7 +51,7 @@ router.post('/',(req,res) => {
                                     },{
                                         $push: {
                                             device: {
-                                                device_id: req.body.username + '_' + req.body.device_id,
+                                                device_id: req.body.device_id,
                                                 device_type: req.body.device_type,
                                                 device_password: hashedDevicePassword
                                             }
@@ -58,6 +64,7 @@ router.post('/',(req,res) => {
                                         })
                                         .catch((err) => {
                                             console.log(err);
+                                            res.status(500).send(err);
                                         })
                                 })
                                 .catch((err) => {
@@ -81,7 +88,8 @@ router.post('/',(req,res) => {
                                                     device_id: req.body.device_id,
                                                     device_password: hashedDevicePassword,
                                                     device_type: req.body.device_type
-                                                }
+                                                },
+                                                isAdmin: req.body.isAdmin
                                             });
 
                                             user.save()
@@ -89,10 +97,14 @@ router.post('/',(req,res) => {
                                                     // console.log(_.pick(ans, ['username', 'email', 'device.device_id', 'device.device_type']));
                                                     let response = 'New user added : ' + ans.username + '\n' + JSON.stringify(ans);
                                                     console.log(response);
+                                                    const token = user.generateAuthToken();
+                                                    res.set('x-auth-token',token);
                                                     res.status(200).send(response);
+                                                    console.log(token);
                                                 })
                                                 .catch((err) => {
                                                     console.log(err);
+                                                    res.status(500).send(err);
                                                 })
                                         })
                                         .catch((err) => {

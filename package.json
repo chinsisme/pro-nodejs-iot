@@ -25,10 +25,12 @@
   "homepage": "https://github.com/chinsisme/pro-nodejs-iot#readme",
   "dependencies": {
     "bcrypt": "^3.0.0",
+    "config": "^1.30.0",
     "express": "^4.16.3",
     "joi": "^13.4.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.10",
-    "mongoose": "^5.2.2"
+    "mongoose": "^5.2.2",
+    "nodemon": "^1.18.2"
   }
 }

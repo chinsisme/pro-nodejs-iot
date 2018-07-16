@@ -1,14 +1,15 @@
 const express = require('express');
 const app = express();
-const user_login = require('./routes/credentials/user_login');
-const user_register = require('./routes/credentials/user_register');
+const register = require('./routes/credentials/register');
+const user = require('./routes/user');
 const mongoose = require('mongoose');
 const port = process.env.port || 3000 ;
 const mCred = require('./routes/credentials/mongo');
 
 app.use(express.json());
-app.use('/api/user/login', user_login); //Login
-app.use('/api/user/register', user_register); //Register
+app.use('/api/register', register); //Register user
+app.use('/api/user', user);
+
 
 // const mongo_uri_long = 'mongodb://' + mCred.username + ':' + mCred.password + '@' + mCred.host + ':' + mCred.port + '/' + mCred.database;
 const mongo_uri_short = 'mongodb://' + mCred.host + '/' + mCred.database;
@@ -20,4 +21,4 @@ mongoose.connect(mongo_uri_short)
 
 app.listen(port, () => {
     console.log('Listening on port ' + port);
-})
+});

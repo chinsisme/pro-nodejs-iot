@@ -9,7 +9,7 @@ module.exports = async function (info){
             "device.device_id": info.device_id 
         })
                 .then((ans) => {
-                    // console.log(ans);
+                    console.log(ans);
                     // console.log(info.username);
                     return ans;
                 })
@@ -17,7 +17,6 @@ module.exports = async function (info){
                     console.log(err);
                 });
         return result;
-        
     }
     catch(err){
         console.log(err);

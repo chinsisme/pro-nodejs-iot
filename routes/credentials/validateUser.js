@@ -9,6 +9,7 @@ module.exports= async function validateUser(user){
         device_id: Joi.string().min(min_max.device_id_min).max(min_max.device_id_max).required(),
         device_type: Joi.string().min(min_max.device_type_min).max(min_max.device_type_max).required(),
         device_password: Joi.string().min(min_max.device_password_min).max(min_max.device_password_max).required(),
+        isAdmin: Joi.boolean(),
         created: Joi.date()
     };
 
