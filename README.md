@@ -10,3 +10,10 @@ npm install
 export port=3001 //Or anything else
 export my_iot_jwtPrivateKey=? 
 ```
+
+## Versions
+```
+nvm = 0.33.0
+node = v10.6.0
+npm = 6.1.0
+```
