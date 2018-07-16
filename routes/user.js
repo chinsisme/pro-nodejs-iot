@@ -3,11 +3,11 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const User = require('./../models/users');
 const auth = require('./../middleware/auth');
-// const isAdmin = require('./../middleware/isAdmin');
+const isAdmin = require('./../middleware/isAdmin');
 
 router.use(express.json());
 
-router.get('/me', auth, async (req, res) => {
+router.get('/me', auth, isAdmin, async (req, res) => {
     //Check if request contains correct Object ID in the database
     const idObj = mongoose.Types.ObjectId(req.user._id);
     User
@@ -18,7 +18,7 @@ router.get('/me', auth, async (req, res) => {
             }
             else {
                 console.log('Details of authenticated user sent!');
-                console.log(msg);
+                console.log(msg.username);
                 res.status(200).send(msg);
             }
         })

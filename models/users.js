@@ -23,7 +23,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: min_max.email_min,
         maxlength: min_max.email_max,
-        email: true
+        email: true,
+        index: {
+            unique: true
+        }
     },
     device: [{
         device_id: {
@@ -65,7 +68,7 @@ userSchema.index({
 userSchema.methods.generateAuthToken = function() {
     const token = jwt.sign({
         _id: this._id,
-        isAdmin: this._id
+        isAdmin: this.isAdmin
     }, config.get('jwtPrivateKey'));
     return token;
 };
