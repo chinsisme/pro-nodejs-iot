@@ -12,6 +12,8 @@ git checkout dev
 ```
 
 ```
+sudo apt-get update
+sudo apt-get install build-essential
 npm install
 ```
 
